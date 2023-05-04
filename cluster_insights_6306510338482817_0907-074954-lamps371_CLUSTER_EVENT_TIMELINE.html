@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>Cluster Event Timelines</title>
+<style>
+
+
+html{font:100%/120% Helvetica,Arial,sans-serif}a{color:#fe5000;text-decoration:none}a:hover,a:active{color:#98102a}h1{padding:5px 0 10px 0}h3,h4,p{padding:5px 0 5px 0}ul{list-style-type:square;padding:0 0 0 20px}.footer_content{color:#999;font-size:75%;margin:5px;padding:10px 5px}.output{background:#fff;border-radius:5px;box-shadow:5px 5px 10px rgba(0,0,0,.2);box-sizing:border-box;float:left;margin:10px;padding:5px;width:80%}.section{box-sizing:border-box;display:block;float:left;width:100%}.section_heading{background:#1b5162;border-radius:5px;box-sizing:border-box;color:#fff;cursor:pointer;display:flex;margin:0 0 10px 0;padding:0;width:100%}.section_heading_icon{padding:6px 0 0 10px}.section_heading_title{display:flex;padding:10px 0 10px 5px}.open h2{background-color:#f3f3f3;border-radius:5px 5px 0 0;color:#1b3139;margin:0}.open .section_content{background-color:#fff;border-radius:0 0 5px 5px;border:1px solid #dedede;box-sizing:border-box;display:block;margin:0 0 10px 0;padding:20px;transform-origin:top;transform:scaleY(1);transition:transform .4s ease;overflow: auto;}.closed .section_content{display:block;float:left;height:0;transform:scaleY(0);transition:height 1s ease-out}#summary_section p{line-height:2}.download{align-items:center;border-radius:5px;border:none;box-shadow:0 .5px 1px rgba(0,0,0,.1),inset 0 .5px .5px rgba(255,255,255,.5),0 0 0 .5px rgba(0,0,0,.12);color:#fff;display:inline;flex-direction:column;letter-spacing:1px;padding:5px 10px;text-transform:uppercase;background:#fe5000;margin-bottom:10px}.download:hover{background:#98102a}.download a{color:#fff}.recommendation,.congratulation{display:inline;text-transform:uppercase;font-weight:bold}.details_panel{border:1px solid transparent;margin:0;min-height:25px;padding:0}.details_panel_collapsible_button{align-items:flex-start;background:none;border:1px solid transparent;cursor:pointer;display:flex;font-size:100%;overflow:hidden;padding:0;user-select:none;width:100%}.details_panel_collapsible_button_icon{height:24px;width:24px}.details_hostinfo{border:none;display:flex;flex:1 1 0%;font-size:100%;font-weight:normal;line-height:175%;margin:0;outline:none;padding:0;text-align:left}.details_panel_collapsible_info{border:1px dotted transparent;margin:0;padding:0 0 0 24px}.details_panel_collapsible_info ul{margin-block:0}.collapsed .details_panel_collapsible_info{display:none}.expanded .details_panel_collapsible_info{display:block}.gg-check-o{border-radius:100%;border:2px solid #00b379;box-sizing:border-box;display:block;height:22px;margin:0 auto 0 auto;position:relative;transform:scale(var(--ggs, 1));width:22px}.gg-check-o::after{border:solid #00b379;border-style:solid;border-width:0 2px 2px 0;box-sizing:border-box;content:"";display:block;height:10px;left:3px;margin:0 auto 0 auto;position:absolute;top:-1px;transform-origin:bottom left;transform:rotate(45deg);width:6px}.gg-close-o{border-radius:40px;border:2px solid #ff3621;box-sizing:border-box;display:block;height:22px;margin:0 auto 0 auto;position:relative;transform:scale(var(--ggs, 1));width:22px}.gg-close-o::after,.gg-close-o::before{content:"";display:block;box-sizing:border-box;position:absolute;width:12px;height:2px;background:#ff3621;transform:rotate(45deg);border-radius:5px;top:8px;left:3px;margin:0 auto 0 auto}.gg-close-o::after{transform:rotate(-45deg)}.gg-push-chevron-right-o{border-radius:100%;border:2px solid #ffab00;box-sizing:border-box;display:block;height:22px;margin:0 auto 0 auto;position:relative;transform:scale(var(--ggs, 1));width:22px}.gg-push-chevron-right-o::after,.gg-push-chevron-right-o::before{border-right:2px solid #ffab00;box-sizing:border-box;content:"";display:block;height:8px;margin:0 auto 0 auto;position:absolute;right:5px;top:5px;width:2px}.gg-push-chevron-right-o::after{border-bottom:2px solid #ffab00;height:6px;margin:0 auto 0 auto;right:9px;top:6px;transform:rotate(-45deg);width:6px}.gg-chevron-right{border:2px solid transparent;box-sizing:border-box;display:block;height:24px;position:relative;transform:scale(var(--ggs, 1));width:24px}.gg-chevron-right::after{border-bottom:2px solid #999;border-right:2px solid #999;box-sizing:border-box;content:"";display:block;height:8px;position:absolute;right:8px;top:8px;transform:rotate(-45deg);width:8px}.gg-chevron-down{border-radius:100%;border:2px solid transparent;box-sizing:border-box;display:block;height:24px;position:relative;transform:scale(var(--ggs, 1));width:24px}.gg-chevron-down::after{border-bottom:2px solid #999;border-right:2px solid #999;box-sizing:border-box;content:"";display:block;height:8px;left:4px;position:absolute;top:8px;transform:rotate(45deg);width:8px}.gg-chevron-right:hover:after,.gg-chevron-down:hover:after{border-bottom:2px solid #dedede;border-right:2px solid #dedede}#parameters_section th{background-color:#00b379}#parameters_section table{width:50%}a.codelink{font:100%/120% Monaco,"Courier New",monospace}.scrollable_table{border-radius:5px;box-shadow:5px 5px 10px rgba(0,0,0,.2);max-height:300px;max-width:75%;overflow:scroll;position:relative}.scrollable_table table{position:relative}.scrollable_table th{background:#00b379}.scrollable_table thead th{position:sticky;top:0}.scrollable_table thead th:first-child{left:0;z-index:1}.scrollable_table tbody td:first-child{left:0;padding-left:10px;position:sticky;text-align:center}.scrollable_table tbody td.numerical{padding-right:10px;text-align:right}.gg-software-download{border-bottom-left-radius:2px;border-bottom-right-radius:2px;border-top:0;border:2px solid;box-sizing:border-box;display:block;height:6px;margin-top:8px;position:relative;transform:scale(var(--ggs, 1));width:16px}.gg-software-download::after{border-bottom:2px solid;border-left:2px solid;bottom:4px;box-sizing:border-box;content:"";display:block;height:8px;left:2px;position:absolute;transform:rotate(-45deg);width:8px}.gg-software-download::before{background:currentColor;border-radius:3px;bottom:5px;box-sizing:border-box;content:"";display:block;height:10px;left:5px;position:absolute;width:2px}/*# sourceMappingURL=main.css.map */
+
+td.details-control {
+    background: url('https://www.datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+
+td.details-control {
+    background: url('https://www.datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+
+tr.shown td.details-control {
+    background: url('https://www.datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
+
+
+div.legend-area {
+width: 170px;
+}
+.legend-area rect.container-added-legend {
+  fill: #A0DFFF;
+  stroke: #3EC0FF;
+}
+.legend-area rect.container-removed-legend {
+  fill: #FFA1B0;
+  stroke: #FF4D6D;
+}
+.legend-area rect.cluster-event-legend {
+  fill: #A2FCC0;
+  stroke: #36F572;
+}
+.vis-item.container_add  { background-color: #A0DFFF; }
+.vis-item.container_remove   { background-color: #FFA1B0; }
+.vis-item.cluster_event   { background-color: #A2FCC0; }
+
+td.prop { }
+td.val { font-weight: bold; }
+#jobInfoTable td { text-align: left; }
+.fa-someting { color: #005DB6; }
+.fa-sitemap { color: #EC6833; }
+.fa-tasks { color: #009DDC; }
+.fa-database { color: #E01E5A; }
+.fa-list-ul { color: #2FA04A; }</style>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+ <script type="text/javascript" src="https://unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+<link href="https://unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
+<script>
+//$('.dataTables_filter input').unbind().keyup(function() {});
+
+$(document).ready( function () {
+    $.each($('.datatable'), function () {
+        var dt_id = $(this).attr('id');
+        var dt_action = $(this).data('action');
+        if (typeof dt_action !== typeof undefined && dt_action !== false) {
+            if (dt_action.startsWith('data_startup_op') || dt_action.startsWith('data_resize_op')){
+              var table =  $('#' + dt_id).DataTable({
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    select: "single",
+                    order: [],
+                    columns: [
+                    {
+                        className: 'details-control',
+                        orderable: false,
+                        data: null,
+                        defaultContent: '',
+                        width : "2%"
+                    },
+                    { data: "Event",              title: "Event"  },
+                    { data: "Event Start Time",             title: "Event Start Time" },
+                    { data: "Event End Time",       title: "Event End Time" },
+                    { data: "Duration In Seconds",                    title: "Duration", render: renderTmSec  },
+                    { data: "errors",             title: "errors" }
+                ],
+                columnDefs: [
+                       { targets: '_all', className: 'dt-head-left dt-body-left' }
+                ]
+                });
+            console.log("dt_id"+dt_id);
+            console.log("eval(dt_action)");
+            console.log(eval(dt_action));
+            $('#' + dt_id).dataTable().fnAddData(eval(dt_action));
+
+            $('#' + dt_id + ' tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+                console.log(dt_id)
+                var rowIndex = tr.index();
+                var row = table.row(tr);
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                   // row.child.hide();
+                   // tr.removeClass('shown');
+                    destroyChild(row);
+                    tr.removeClass("shown");
+                }
+                else {
+                   var data = row.data();
+                    console.log("dt_id:"+ dt_id);
+                    console.log("data:"+ JSON.stringify(data));
+                    var childRowData = data.details.table_data
+                    var childRowHeaders = data.details.table_headers
+                    var childRowSummary = data.details.summary
+                    var parentRowIdentifier = dt_id + "_" + rowIndex
+                    var expansionDataHeaders = data.details.expansion_data_headers
+                    createChild(parentRowIdentifier,row, childRowData,childRowHeaders,childRowSummary,expansionDataHeaders);
+                    tr.addClass("shown");
+                }
+            });
+            table.on("user-select", function (e, dt, type, cell, originalEvent) {
+                if ($(cell.node()).hasClass("details-control")) {
+                    e.preventDefault();
+                }
+            });
+
+        } else if (dt_action == "container_uptime_data") {
+
+        var container_uptime_table =  $('#' + dt_id).DataTable({
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    select: "single",
+                    data: container_uptime_data,
+                    order: [],
+                    columns: [
+                    { data: "Instance Id",  title: "Instance Id"  },
+                    { data: "Container Id", title: "Container Id" },
+                    { data: "Node Type", title: "Node Type" },
+                    { data: "Is Driver",    title: "Is Driver"},
+                    { data: "Host Ip",      title: "Duration" },
+                    { data: "Container Ip", title: "Container Ip" },
+                    { data: "Public Ip", title: "Public Ip" },
+                    { data: "Arrival Time", title: "Arrival Time" },
+                    { data: "Last Known Time", title: "Last Known Time" },
+
+                ],
+                columnDefs: [
+                       { targets: '_all', className: 'dt-head-left dt-body-left' }
+                ]
+                });
+        }
+       else {
+            var table = $('.datatable').DataTable({
+                retrieve: true,
+                responsive: true,
+            });
+        }
+    }
+  });
+});
+var sptr = '</br>'
+var s0r1 = 0
+var colors = ['#EFEFEF', '#7ac470', '#fcba03', '#ad03fc'];
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function createChild(parentRowIdentifier,row, rowData,rowHeaders, childRowSummary,expansionDataHeaders) {
+	// This is the table we'll convert into a DataTable
+
+    var subT = '';
+    console.log('summary:' + childRowSummary);
+    if (childRowSummary) {
+        var summary = childRowSummary;
+        subT += ' </br> <div align="left">';
+        subT += summary;
+        subT += '</div>';
+    } else { subT = '' }
+
+    var childTableId = "child_tbl_"+ parentRowIdentifier
+
+    var childInfo = $('<div>' + subT + '</br><table id="'+ childTableId  +'" class="cell-border compact stripe datatable" width="100%">' + '</div>');
+
+	row.child(childInfo).show();
+
+    // Get background color
+    var color = colors[0];
+
+    // And set if found
+    if (color) {
+      childInfo.parent().css('background', color);
+    }
+
+    // Make sure we have an array of data for the `data` option.
+    if ( ! Array.isArray( rowData ) ) {
+      rowData = [rowData];
+    }
+
+    var detailsControl = {
+				className: "details-control",
+				orderable: false,
+				data: null,
+				defaultContent: "",
+				width: "2%"
+			};
+
+    // Build columns
+    var columns = [];
+
+    for (var i in rowHeaders) {
+      columns.push({"data": rowHeaders[i], title: capitalizeFirstLetter(rowHeaders[i])});
+    }
+    if(expansionDataHeaders.length > 0) {
+    console.log("expansionDataHeaders:" + expansionDataHeaders);
+     columns.unshift(detailsControl);
+    }
+
+    //console.log("rowData:"+ JSON.stringify(rowData));
+    //console.log("columns "+ JSON.stringify(columns));
+
+	var childTable = $('#'+ childTableId )
+      .on('draw.dt', function (e, settings) {
+       //e.stopPropagation();
+       })
+      .DataTable({
+		pageLength: 25,
+        data: rowData,
+		columns: columns,
+		select: true,
+		sDom: "ltrip",
+        lengthMenu: [[5, 25, -1], [5, 25, "All"]],
+        order: [],
+        fnDrawCallback: function(oSettings) {
+            var totalPages = this.api().page.info().pages;
+            if(totalPages == 1){
+                jQuery('.dataTables_paginate').hide();
+            }
+            else {
+                jQuery('.dataTables_paginate').show();
+            }
+        }
+	});
+    //console.log("childTableId:"+ childTableId)
+	$('#' + childTableId + ' tbody').on('click', 'td.details-control', function () {
+                var tr = $(this).closest('tr');
+               //var dt_id = $(this).attr('id');
+                //console.log(" child dt_id: "+ dt_id)
+                console.log(" child tr: "+ tr)
+                var rowIndex = tr.index();
+                var row = childTable.row(tr);
+                if (row.child.isShown()) {
+                    destroyChild(row);
+                    tr.removeClass("shown");
+                }
+                else {
+                   var data = row.data();
+                    // Simulate fetching data for child table
+                    var childIdentifier = "grant_"+ childTableId + "_" + rowIndex
+                    //console.log("data" + JSON.stringify(data));
+                    var rowData = data
+                    var rowHeaders = expansionDataHeaders
+                    //console.log("parentRowIdentifier in grand child: "+ parentRowIdentifier)
+                    //console.log("grant child: "+ rowIndex)
+                    row.child(createChildTableDetails(rowData,expansionDataHeaders,childIdentifier)).show();
+                    tr.addClass("shown");
+                }
+            });
+            childTable.on("user-select", function (e, dt, type, cell, originalEvent) {
+                if ($(cell.node()).hasClass("details-control")) {
+                    e.preventDefault();
+                }
+            });
+
+}
+
+function createChildTableDetails(rowData,rowHeaders,childIdentifier) {
+    let arraySize = rowHeaders.length
+    var subT = '';
+
+    subT += '<div class="grand_child_div"><table cellpadding="0" cellspacing="0" border="0">';
+    for(let v=0; v < arraySize; v++){
+        subT += "<tr><td>"+rowHeaders[v]+":</td><td>"+rowData[rowHeaders[v]]+"</td></tr>"
+    }
+    subT += '</table></div>';
+    return '<div>' + subT + '</div>';
+}
+
+function destroyChild(row) {
+	// Remove and destroy the DataTable in the child row
+
+	$.each($("table",row.child()),function() {
+	    var table = $("table", $(this));
+        table.detach();
+        table.DataTable().destroy();
+
+	});
+	// And then hide the row
+	row.child.hide();
+}
+
+
+var sptr = '</br>'
+var s0r1 = 0
+function renderJR(d, t, r) {
+    if (t === 'display' || t === 'filter') {
+        if (d === 0) return '';
+        return '<i class="fa fa-check-square" aria-hidden="true" style="color:green;"></i>';
+    } return d;
+}
+function renderTm(d, t, r) {
+    if (typeof d === 'undefined' || d === 0) return '-';
+    if (t === 'display' || t === 'filter') { return toDHMS(d); } return d;
+}
+function renderTmSec(d, t, r) {
+    if (typeof d === 'undefined' || d === 0) return '-';
+    if (t === 'display' || t === 'filter') { return toDHMS(d*1000); } return d;
+}
+function renderLDTm(d, t, r) {
+    if (t === 'display' || t === 'filter') {
+        if (d === 0) { return '<span style="color: #CC5500;">-</span>'; }
+        return '<span style="color: #CC5500;">' + toDHMS(d) + '</span>';
+    } return d;
+}
+function renderSz(d, t, r) {
+    if (t === 'display' || t === 'filter') { if (d === 0) return '-'; return toTGMKB(d); }
+    return d;
+}
+function renderRc(d, t, r) {
+    if (t === 'display' || t === 'filter') { if (d === 0) return '-'; return commas(d); }
+    return d;
+}
+function renderSzRc(d, t, r) {
+    if (t === 'display' || t === 'filter') {
+        if (d[0] === 0 && d[1] === 0) return '-'; return toTGMKB(d[0]) + sptr + commas(d[1]);
+    }
+    return d[s0r1];
+}
+function renderSzSz(d, t, r) {
+    if (t === 'display' || t === 'filter') {
+        if (d[0] === 0 && d[1] === 0) return '-'; return toTGMKB(d[0]) + sptr + toTGMKB(d[1]);
+    }
+    return d[0];
+}
+function renderSuccTot(d, t, r) {
+    if (t === 'display' || t === 'filter') {
+        if (d[2] !== '') return commas(d[0],0) + ' / ' + commas(d[1],0) + sptr + '(' + d[2] + ')';
+        return commas(d[0],0) + ' / ' + commas(d[1],0);
+    }
+    return d[0];
+}
+function toDHMS(tm) {
+    if (tm == null) return 'Unknown';
+    if (tm == 0) return '-';
+    if (tm < 1000) return tm + 'ms';
+    var sec = (tm/1000) % 60; var min = Math.floor(tm/60000); var hour = Math.floor(min/60); min = min % 60;
+    ret = ''; if (hour > 0) ret += hour + 'h '; if (min > 0) ret += min + 'm '; if (sec > 0) ret += sec.toFixed(1) + 's';
+    return ret
+}
+
+function toDHMSFromSec(ts) {
+    if (ts == null) return 'Unknown';
+    if (ts == 0) return '-';
+    var sec = Math.floor(ts)
+    var min = Math.floor(ts/60); var hour = Math.floor(min/60); min = min % 60;
+    ret = ''; ret = hour + 'h ' + min + 'm ' + sec.toFixed(0) + 's';
+    return ret
+}
+
+
+function toTGMKB(bytes, separator = ' ') {
+    if (bytes <= 0) return '-';
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.min(parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString(), 10), sizes.length - 1);
+    return `${(bytes / (1024 ** i)).toFixed(i ? 1 : 0)}${separator}${sizes[i]}`;
+}
+function commas(x, zero='-') {
+    if (x == 0) return zero;
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+   return parts.join(".");
+}
+    var data_startup_op_1 = [{"Duration In Seconds": 0.395, "Event": "VM Placement (New/Reuse)", "Event End Time": "2023-03-24 05:52:29.489", "Event Start Time": "2023-03-24 05:52:29.093", "cluster_operation": "startCluster", "details": {"expansion_data_headers": ["VM Setup Failure Details"], "summary": "\n        \u003ctable id =summary\u0027 cellspacing=\u00270\u0027 cellpadding=0\u003e \n        \u003ctr\u003e \n        \u003ctd\u003ePlacement Duration:\u003c/td\u003e\u003ctd\u003e-\u003c/td\u003e\n        \u003ctd\u003ePercentiles for Approximate VM launch duration in Seconds:\u003c/td\u003e\u003ctd\u003eNA\u003c/td\u003e\n        \u003c/tr\u003e\n        \u003ctr\u003e\n        \u003ctd\u003eNumber of new launch attempts:\u003c/td\u003e \u003ctd\u003e0\u003c/td\u003e\n        \u003ctd\u003eNumber of reused VMs:\u003c/td\u003e\u003ctd\u003e11\u003c/td\u003e\n        \u003c/tr\u003e \n        \u003ctr\u003e\n        \u003ctd\u003eSucceeded Attempt count :\u003c/td\u003e\u003ctd\u003e0\u003c/td\u003e\n        \u003ctd\u003eFailed Attempt Count :\u003c/td\u003e\u003ctd\u003e11\u003c/td\u003e\n        \u003c/tr\u003e\n        \u003c/table\u003e", "table_data": [{"Error": "NA", "Instance Id": "2765fe36f6e74b2fbae70c319c901c62", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.229", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "2fc85162c6c54da1b037f932d7350357", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.447", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "642ca981438e4ce187cbd7445bfb9a86", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.374", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "83eba031a2cf4107bcf98aee5130bd46", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.296", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "8e3aab5e22e7481980eb37bf0d3b1370", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.097", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "a05e8fb2eb194da696cafe91efc005b7", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.161", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "a3a4c087bd7b403a942363bf4281efce", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.198", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "b563846990484d73a8d9e144acd573a8", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.262", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "e109177f63dc4422a192113f31bbbc26", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.333", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "ee843e0285224230b6255ceb0d8128fc", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.13", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}, {"Error": "NA", "Instance Id": "febfe1914f25472fa3174a4abbfc91c5", "Instance Setup Status": "NA", "Launch Duration In Sec": "", "Launch Finish Time": "", "Launch Start Time": "", "New Or Reuse": "reuse", "Placement Await Time": "2023-03-24 05:52:29.408", "Placement Status": "failure", "VM Setup Failure Details": "NA", "instance_info": {"container_up": null, "host_ip": null, "public_ip": null}, "status": ""}], "table_headers": ["Instance Id", "New Or Reuse", "Placement Status", "Placement Await Time", "Launch Start Time", "Launch Finish Time", "Launch Duration In Sec", "Instance Setup Status", "Error"]}, "errors": "[]", "event_name": "placeContainers", "up_or_down_size": "upsize"}, {"Duration In Seconds": 9.0, "Event": "Container Launch and Setup", "Event End Time": "2023-03-24 05:52:42.975", "Event Start Time": "2023-03-24 05:52:33.571", "cluster_operation": "startCluster", "details": {"expansion_data_headers": ["Errors", "Host Ip", "Container Ip", "Public Ip", "Node Type"], "summary": "\n                \u003ctable id =summary\u0027 cellspacing=\u00270\u0027 cellpadding=0\u003e \n                \u003ctr\u003e \n                \u003ctd\u003eContainer Launch Duration:\u003c/td\u003e\u003ctd\u003e09s\u003c/td\u003e\n                \u003ctd\u003ePercentiles for Container Launch Duration in Seconds:\u003c/td\u003e\u003ctd\u003e{0.5: 8.0, 0.75: 8.0, 0.9: 9.0, 0.95: 9.0, 0.99: 9.0}\u003c/td\u003e\n                \u003c/tr\u003e\n                \u003ctr\u003e\n                \u003ctd\u003eSucceeded Attempt count :\u003c/td\u003e\u003ctd\u003e11\u003c/td\u003e\n                \u003ctd\u003eFailed Attempt Count :\u003c/td\u003e\u003ctd\u003e0\u003c/td\u003e\n                \u003c/tr\u003e\n                \u003c/table\u003e", "table_data": [{"Container Id": "06283ddeb2374edb907adca422ed5ddf", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:42.975", "Container Start Time": "2023-03-24 05:52:33.614", "Duration In Sec": 9, "Errors": "", "Host Ip": "", "Instance Id": "2765fe36f6e74b2fbae70c319c901c62", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "202e91f3bcd54b54acc73692b07be474", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.954", "Container Start Time": "2023-03-24 05:52:33.673", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "2fc85162c6c54da1b037f932d7350357", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "5f90240a8d0e46088f3a519dc1610196", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.953", "Container Start Time": "2023-03-24 05:52:33.652", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "642ca981438e4ce187cbd7445bfb9a86", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "008814b04add4ec78f9e7c66d6685f04", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.951", "Container Start Time": "2023-03-24 05:52:33.632", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "83eba031a2cf4107bcf98aee5130bd46", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "a75ade776cc4449f97d4b89257af918b", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.949", "Container Start Time": "2023-03-24 05:52:33.571", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "8e3aab5e22e7481980eb37bf0d3b1370", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "c5aa211977a54a969faa5b2edc2b97cf", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:42.974", "Container Start Time": "2023-03-24 05:52:33.597", "Duration In Sec": 9, "Errors": "", "Host Ip": "", "Instance Id": "a05e8fb2eb194da696cafe91efc005b7", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "ac8c042e192142c991aef5a0f3d0ede8", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.95", "Container Start Time": "2023-03-24 05:52:33.606", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "a3a4c087bd7b403a942363bf4281efce", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "a9bf6ecdd85e44b98c4b4f829737dd37", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.951", "Container Start Time": "2023-03-24 05:52:33.622", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "b563846990484d73a8d9e144acd573a8", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "7d67f514f0bc404ea42dd7c42bf2289f", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.952", "Container Start Time": "2023-03-24 05:52:33.642", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "e109177f63dc4422a192113f31bbbc26", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "f2326a035c2f40c387f5dc9743b26aff", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.954", "Container Start Time": "2023-03-24 05:52:33.683", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "ee843e0285224230b6255ceb0d8128fc", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}, {"Container Id": "c0d1a4f5099c480dba3f37afd57264b1", "Container Ip": "", "Container Launch Finish Time": "2023-03-24 05:52:41.953", "Container Start Time": "2023-03-24 05:52:33.662", "Duration In Sec": 8, "Errors": "", "Host Ip": "", "Instance Id": "febfe1914f25472fa3174a4abbfc91c5", "Is Driver": "", "Node Type": "", "Public Ip": "NA", "Status": "success"}], "table_headers": ["Instance Id", "Container Id", "Is Driver", "Container Start Time", "Container Launch Finish Time", "Duration In Sec", "Status", "Errors"]}, "errors": "[]", "event_name": "launchContainers", "up_or_down_size": "upsize"}, {"Duration In Seconds": 0.043, "Event": "Init Script V1 Execution", "Event End Time": "2023-03-24 05:52:43.041", "Event Start Time": "2023-03-24 05:52:42.997", "cluster_operation": "startCluster", "details": {"summary": ""}, "errors": "[]", "event_name": "initScripts", "up_or_down_size": "upsize"}, {"Duration In Seconds": 0.001, "Event": "Start Driver Processes", "Event End Time": "2023-03-24 05:52:43.143", "Event Start Time": "2023-03-24 05:52:43.142", "cluster_operation": "startCluster", "details": {"expansion_data_headers": [], "summary": "", "table_data": [{"Container Id": "f2326a035c2f40c387f5dc9743b26aff", "Container Ip": "10.20.126.4", "Container Memory(MB)": "50824", "Host Ip": "10.20.82.4", "Instance Id": "ee843e0285224230b6255ceb0d8128fc", "Node Type": "Standard_DS5_v2", "Public Ip": "52.174.23.217", "Status": "success"}], "table_headers": ["Instance Id", "Container Id", "Host Ip", "Container Ip", "Public Ip", "Node Type", "Container Memory(MB)", "Status"]}, "errors": "[]", "event_name": "startDriverProcesses", "up_or_down_size": "upsize"}];
+
+var container_uptime_data = [{"Arrival Time": "2023-03-24 05:25:02.712", "Container Delete Time": "2023-03-24 05:51:56.603", "Container Id": "4bf8b8de4bd44dc2b1a0c44d3d9430e3", "Container Ip": "10.20.126.8", "Container Start Time": null, "Host Ip": "10.20.82.8", "Instance Id": "a05e8fb2eb194da696cafe91efc005b7", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.603", "Node Type": "Standard_DS5_v2", "Public Ip": "52.232.77.193"}, {"Arrival Time": "2023-03-24 05:25:02.634", "Container Delete Time": "2023-03-24 05:51:56.603", "Container Id": "98966fadb33c49ef9d84489c0d25ed57", "Container Ip": "10.20.126.14", "Container Start Time": null, "Host Ip": "10.20.82.14", "Instance Id": "8e3aab5e22e7481980eb37bf0d3b1370", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.603", "Node Type": "Standard_DS5_v2", "Public Ip": "13.73.149.165"}, {"Arrival Time": "2023-03-24 05:25:03.083", "Container Delete Time": "2023-03-24 05:51:56.613", "Container Id": "5929f527fc0a4eb8bd845128e996a8ae", "Container Ip": "10.20.126.17", "Container Start Time": null, "Host Ip": "10.20.82.17", "Instance Id": "a3a4c087bd7b403a942363bf4281efce", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.613", "Node Type": "Standard_DS5_v2", "Public Ip": "13.93.30.248"}, {"Arrival Time": "2023-03-24 05:25:02.999", "Container Delete Time": null, "Container Id": "47987f2d38054033bb296e44a0058321", "Container Ip": "10.20.126.4", "Container Start Time": null, "Host Ip": "10.20.82.4", "Instance Id": "ee843e0285224230b6255ceb0d8128fc", "Is Driver": "true", "Last Known Time": "2023-03-24 05:51:03.014", "Node Type": "Standard_DS5_v2", "Public Ip": "52.174.23.217"}, {"Arrival Time": "2023-03-24 05:25:02.889", "Container Delete Time": "2023-03-24 05:51:56.588", "Container Id": "79ff0ad0169c426fa07c679b061695bc", "Container Ip": "10.20.126.6", "Container Start Time": null, "Host Ip": "10.20.82.6", "Instance Id": "2765fe36f6e74b2fbae70c319c901c62", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.588", "Node Type": "Standard_DS5_v2", "Public Ip": "52.233.169.103"}, {"Arrival Time": "2023-03-24 05:25:03.055", "Container Delete Time": "2023-03-24 05:51:56.588", "Container Id": "49a4c4066ee242598f0d1ea059135bd7", "Container Ip": "10.20.126.22", "Container Start Time": null, "Host Ip": "10.20.82.22", "Instance Id": "83eba031a2cf4107bcf98aee5130bd46", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.588", "Node Type": "Standard_DS5_v2", "Public Ip": "52.178.98.3"}, {"Arrival Time": "2023-03-24 05:25:03.16", "Container Delete Time": "2023-03-24 05:51:56.588", "Container Id": "ece03f6d77604f1daf232499d3354359", "Container Ip": "10.20.126.9", "Container Start Time": null, "Host Ip": "10.20.82.9", "Instance Id": "e109177f63dc4422a192113f31bbbc26", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.588", "Node Type": "Standard_DS5_v2", "Public Ip": "52.174.26.60"}, {"Arrival Time": "2023-03-24 05:25:02.688", "Container Delete Time": "2023-03-24 05:51:56.583", "Container Id": "9925de67f9a5476ba09293a6697982a9", "Container Ip": "10.20.126.12", "Container Start Time": null, "Host Ip": "10.20.82.12", "Instance Id": "b563846990484d73a8d9e144acd573a8", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.583", "Node Type": "Standard_DS5_v2", "Public Ip": "23.97.188.188"}, {"Arrival Time": "2023-03-24 05:25:02.737", "Container Delete Time": "2023-03-24 05:51:56.58", "Container Id": "3aebd6fd4c9c42238b5929e5b0685f97", "Container Ip": "10.20.126.24", "Container Start Time": null, "Host Ip": "10.20.82.24", "Instance Id": "642ca981438e4ce187cbd7445bfb9a86", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.58", "Node Type": "Standard_DS5_v2", "Public Ip": "13.95.136.243"}, {"Arrival Time": "2023-03-24 05:25:02.939", "Container Delete Time": "2023-03-24 05:51:56.58", "Container Id": "0672933e9cb94a11b959c479f2c310de", "Container Ip": "10.20.126.5", "Container Start Time": null, "Host Ip": "10.20.82.5", "Instance Id": "febfe1914f25472fa3174a4abbfc91c5", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.58", "Node Type": "Standard_DS5_v2", "Public Ip": "52.174.31.161"}, {"Arrival Time": "2023-03-24 05:25:02.915", "Container Delete Time": "2023-03-24 05:51:56.55", "Container Id": "dcec59123bd84c3db6a81b48204dde68", "Container Ip": "10.20.126.15", "Container Start Time": null, "Host Ip": "10.20.82.15", "Instance Id": "2fc85162c6c54da1b037f932d7350357", "Is Driver": "false", "Last Known Time": "2023-03-24 05:51:56.55", "Node Type": "Standard_DS5_v2", "Public Ip": "40.68.58.206"}];
+var timeLineData = {"endTimeUTC": "2023-03-24 05:53:00", "item_data": [{"className": "container_remove", "content": "10.20.126.8", "group": "container_remove", "start": "2023-03-24 05:51:56.603", "title": "Instance Id: a05e8fb2eb194da696cafe91efc005b7,\u003cbr /\u003e Container Id: 4bf8b8de4bd44dc2b1a0c44d3d9430e3 \u003cbr /\u003eHost Ip: 10.20.82.8,Container Ip: 10.20.126.8\n                                 \u003cbr /\u003ePublic Ip: 52.232.77.193,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.603"}, {"className": "container_remove", "content": "10.20.126.14", "group": "container_remove", "start": "2023-03-24 05:51:56.603", "title": "Instance Id: 8e3aab5e22e7481980eb37bf0d3b1370,\u003cbr /\u003e Container Id: 98966fadb33c49ef9d84489c0d25ed57 \u003cbr /\u003eHost Ip: 10.20.82.14,Container Ip: 10.20.126.14\n                                 \u003cbr /\u003ePublic Ip: 13.73.149.165,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.603"}, {"className": "container_remove", "content": "10.20.126.17", "group": "container_remove", "start": "2023-03-24 05:51:56.613", "title": "Instance Id: a3a4c087bd7b403a942363bf4281efce,\u003cbr /\u003e Container Id: 5929f527fc0a4eb8bd845128e996a8ae \u003cbr /\u003eHost Ip: 10.20.82.17,Container Ip: 10.20.126.17\n                                 \u003cbr /\u003ePublic Ip: 13.93.30.248,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.613"}, {"className": "container_remove", "content": "10.20.126.6", "group": "container_remove", "start": "2023-03-24 05:51:56.588", "title": "Instance Id: 2765fe36f6e74b2fbae70c319c901c62,\u003cbr /\u003e Container Id: 79ff0ad0169c426fa07c679b061695bc \u003cbr /\u003eHost Ip: 10.20.82.6,Container Ip: 10.20.126.6\n                                 \u003cbr /\u003ePublic Ip: 52.233.169.103,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.588"}, {"className": "container_remove", "content": "10.20.126.22", "group": "container_remove", "start": "2023-03-24 05:51:56.588", "title": "Instance Id: 83eba031a2cf4107bcf98aee5130bd46,\u003cbr /\u003e Container Id: 49a4c4066ee242598f0d1ea059135bd7 \u003cbr /\u003eHost Ip: 10.20.82.22,Container Ip: 10.20.126.22\n                                 \u003cbr /\u003ePublic Ip: 52.178.98.3,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.588"}, {"className": "container_remove", "content": "10.20.126.9", "group": "container_remove", "start": "2023-03-24 05:51:56.588", "title": "Instance Id: e109177f63dc4422a192113f31bbbc26,\u003cbr /\u003e Container Id: ece03f6d77604f1daf232499d3354359 \u003cbr /\u003eHost Ip: 10.20.82.9,Container Ip: 10.20.126.9\n                                 \u003cbr /\u003ePublic Ip: 52.174.26.60,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.588"}, {"className": "container_remove", "content": "10.20.126.12", "group": "container_remove", "start": "2023-03-24 05:51:56.583", "title": "Instance Id: b563846990484d73a8d9e144acd573a8,\u003cbr /\u003e Container Id: 9925de67f9a5476ba09293a6697982a9 \u003cbr /\u003eHost Ip: 10.20.82.12,Container Ip: 10.20.126.12\n                                 \u003cbr /\u003ePublic Ip: 23.97.188.188,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.583"}, {"className": "container_remove", "content": "10.20.126.24", "group": "container_remove", "start": "2023-03-24 05:51:56.58", "title": "Instance Id: 642ca981438e4ce187cbd7445bfb9a86,\u003cbr /\u003e Container Id: 3aebd6fd4c9c42238b5929e5b0685f97 \u003cbr /\u003eHost Ip: 10.20.82.24,Container Ip: 10.20.126.24\n                                 \u003cbr /\u003ePublic Ip: 13.95.136.243,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.58"}, {"className": "container_remove", "content": "10.20.126.5", "group": "container_remove", "start": "2023-03-24 05:51:56.58", "title": "Instance Id: febfe1914f25472fa3174a4abbfc91c5,\u003cbr /\u003e Container Id: 0672933e9cb94a11b959c479f2c310de \u003cbr /\u003eHost Ip: 10.20.82.5,Container Ip: 10.20.126.5\n                                 \u003cbr /\u003ePublic Ip: 52.174.31.161,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.58"}, {"className": "container_remove", "content": "10.20.126.15", "group": "container_remove", "start": "2023-03-24 05:51:56.55", "title": "Instance Id: 2fc85162c6c54da1b037f932d7350357,\u003cbr /\u003e Container Id: dcec59123bd84c3db6a81b48204dde68 \u003cbr /\u003eHost Ip: 10.20.82.15,Container Ip: 10.20.126.15\n                                 \u003cbr /\u003ePublic Ip: 40.68.58.206,Node Type: Standard_DS5_v2\u003cbr /\u003eTimestamp : 2023-03-24 05:51:56.55"}, {"className": "cluster_event", "content": "Cluster Start (Existing)", "group": "cluster_event", "start": "2023-03-24 05:52:29.002", "title": "Operation: Cluster Start (Existing) , Type :upsize\u003cbr /\u003e\u003cbr /\u003e\n                                    Start Time: 2023-03-24 05:52:29.002 , End Time: 2023-03-24 05:53:00"}], "startTimeUTC": "2023-03-24 05:25:00"};
+</script>
+
+<style type="text/css">
+
+</style>
+</head>
+
+<body>
+<div style="font-family: Arial, sans-serif; font-size: 0.85em; padding: 12px;">
+  <h1></h1>
+  Report generated on: 20 Apr 2023 04:55 PM UTC
+  </br>
+
+
+
+<div class="section closed" id="summary_section">
+  <h2 class=section_heading>
+  <div class=section_heading_icon>
+  <div title="Expand to show section" class=gg-chevron-right></div>
+  </div><span class=section_heading_title>Cluster Event Timeline</span>
+  </h2>
+  <div class=section_content>
+        <h3>Cluster Container Timeline</h3>
+        </br>
+         <div id="visualization"></div>
+        </br>
+   </div>
+</div>
+
+<div class="section closed" id="summary_section">
+  <h2 class=section_heading>
+  <div class=section_heading_icon>
+  <div title="Expand to show section" class=gg-chevron-right></div>
+  </div><span class=section_heading_title>Cluster Driver/Worker Details</span>
+  </h2>
+  <div class=section_content>
+        <h3>Cluster Driver/Worker Uptime Details </h3>
+        </br>
+            <table id="container_up_time_tbl" data-action="container_uptime_data" class="cell-border compact stripe datatable" width="100%">
+            </table>
+        </br>
+        </br>
+   </div>
+</div>
+
+
+
+
+
+<div class="section closed" id="summary_section">
+  <h2 class=section_heading>
+  <div class=section_heading_icon>
+  <div title="Expand to show section" class=gg-chevron-right></div>
+  </div><span class=section_heading_title>Cluster Startup Events</span>
+  </h2>
+  <div class=section_content>
+        <h3>Cluster Operation : Cluster Start (Existing) , Start Time:  2023-03-24 05:52:29.002,End Time: 2023-03-24 05:53:00</h3>
+        </br>
+            <table id="startup_op_1" data-action="data_startup_op_1" class="cell-border compact stripe datatable" width="100%">
+            </table>
+        </br>
+        </br>
+   </div>
+</div>
+
+
+
+</div>
+</body>
+<script>
+  var sectionHeading = document.getElementsByClassName("section_heading");
+  for (i = 0; i < sectionHeading.length; i++) sectionHeading[i].addEventListener("click", toggleSectionItem, !1);
+
+  function toggleSectionItem() {
+    var e = document.getElementsByClassName("section"),
+      t = document.getElementsByClassName("section_heading_icon"),
+      s = this.getElementsByClassName("section_heading_icon")[0].children[0],
+      a = this.parentNode.className;
+    for (i = 0; i < e.length; i++) {
+      var n = t[i].children[0];
+      e[i].className = "section closed", n.className = "gg-chevron-right", n.title = "Expand to show section"
+    }
+    "section closed" == a ? (this.parentNode.className = "section open", s.className = "gg-chevron-down", s.title = "Collapse to hide section") : (this.parentNode.className = "section closed", s.className = "gg-chevron-right", s.title = "Expand to show section")
+  }
+  var detailPanelButtons = document.getElementsByClassName("details_panel_collapsible_button");
+  for (i = 0; i < detailPanelButtons.length; i++) detailPanelButtons[i].addEventListener("click", toggleDetailInfo, !1);
+
+  function toggleDetailInfo() {
+    var e = this.parentNode.className,
+      t = this.getElementsByClassName("details_panel_collapsible_button_icon")[0].children[0];
+    "details_panel collapsed" == e ? (this.parentNode.className = "details_panel expanded", t.className = "gg-chevron-down", t.title = "Collapse to hide details") : (this.parentNode.className = "details_panel collapsed", t.className = "gg-chevron-right", t.title = "Expand to show details")
+  }
+</script>
+
+<script>
+
+ if (timeLineData) {
+  var groups = new vis.DataSet([
+	{"id": "container_add", "value": 1, className:'container_add',"content": '<div class="legend-area"><svg width="160px" height="75px">'+
+	'<rect class="container-added-legend" x="5px" y="5px" width="20px" height="15px" rx="2px" ry="2px"></rect> <text x="30px" y="20px">Container Add</text></svg></div>' },
+    {"id": "container_remove", "value": 1, className:'container_removed',"content": '<div class="legend-area"><svg width="160px" height="75px">'+
+	'<rect class="container-removed-legend" x="5px" y="5px" width="20px" height="15px" rx="2px" ry="2px"></rect> <text x="30px" y="20px">Container Remove</text></svg></div>' },
+    {"id": "cluster_event", "value": 3, className:'cluster_event',"content": '<div class="legend-area"><svg width="160px" height="75px">'+
+	'<rect class="cluster-event-legend" x="5px" y="5px" width="20px" height="15px" rx="2px" ry="2px"></rect> <text x="30px" y="20px">Cluster Events</text></svg></div>' },
+
+  ]);
+
+  // create a dataset with items
+  var items = new vis.DataSet(timeLineData.item_data)
+
+  // create visualization
+  var container = document.getElementById('visualization');
+  var options = {
+    // option groupOrder can be a property name or a sort function
+    // the sort function must compare two groups and return a value
+    //     > 0 when a > b
+    //     < 0 when a < b
+    //       0 when a == b
+    groupOrder: function (a, b) {
+      return a.value - b.value;
+    },
+    groupOrderSwap: function (a, b, groups) {
+    	var v = a.value;
+    	a.value = b.value;
+    	b.value = v;
+    },
+    groupTemplate: function(group){
+      var container = document.createElement('div');
+      var label = document.createElement('span');
+      label.innerHTML = group.content + ' ';
+      container.insertAdjacentElement('afterBegin',label);
+
+      return container;
+    },
+    editable: false,
+    align: 'left',
+    selectable: false,
+    showCurrentTime: false,
+    zoomable: false,
+    locale: "en",
+    dataAttributes: ['tooltip', 'id'],
+    orientation: 'both',
+    start: timeLineData.startTimeUTC,
+    end: timeLineData.endTimeUTC,
+  };
+
+  var timeline = new vis.Timeline(container);
+  timeline.setOptions(options);
+  timeline.setGroups(groups);
+  timeline.setItems(items);
+}
+</script>
+
+</html>
