@@ -1,0 +1,3 @@
+[submodule "repopub"]
+	path = repopub
+	url = https://github.com/girishrma57/repopub.git
